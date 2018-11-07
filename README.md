@@ -158,6 +158,7 @@ If you get `no attribute HTML_PLACEHOLDER`: update your markdown package.
 - py yaml (pip install pyyaml)
 - py docopt (pip install docopt)
 - py tabulate (pip install tabulate)
+- py pymdownx (pip install pymdownx)
 
 Further a 256 color terminal (for now best with dark background) and font support for a few special separator characters (which you could change via config).
 
