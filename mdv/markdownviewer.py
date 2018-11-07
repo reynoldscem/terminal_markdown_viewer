@@ -1374,6 +1374,11 @@ def main(
         if not have_pygments:
             errout(col("No pygments, can not analyze code for hilite", R))
 
+    # Disable using subscripts in the tilde config.
+    # We only care about strikethrough.
+    tilde_ext = tilde.DeleteSubExtension()
+    tilde_ext.config['subscript'][0] = False
+
     # Create an instance of the Markdown class with the new extension
     MD = markdown.Markdown(
         tab_length=int(tab_length),
@@ -1381,7 +1386,7 @@ def main(
             AnsiPrintExtension(),
             TableExtension(),
             fenced_code.FencedCodeExtension(),
-            tilde.DeleteSubExtension()
+            tilde_ext
         ],
     )
 
