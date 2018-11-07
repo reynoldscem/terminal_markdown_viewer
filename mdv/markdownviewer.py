@@ -165,6 +165,8 @@ from json import loads
 from markdown.treeprocessors import Treeprocessor
 from markdown.extensions import Extension, fenced_code
 from functools import partial
+from pymdownx import tilde
+
 
 errout, envget = partial(print, file=sys.stderr), os.environ.get
 
@@ -451,6 +453,7 @@ code_start, code_end = '\x07', '\x08'
 stng_start, stng_end = '\x16', '\x10'
 link_start, link_end = '\x17', '\x18'
 emph_start, emph_end = '\x11', '\x12'
+strike_start, strike_end = '\x13', '\x14'
 punctuationmark = '\x13'
 fenced_codemark = '\x14'
 hr_marker = '\x15'
@@ -586,11 +589,18 @@ def col(s, c, bg=0, no_reset=0):
         (stng_start, stng_end, H2),
         (link_start, link_end, H2),
         (emph_start, emph_end, H3),
+        (strike_start, strike_end, H3),
     ):
         if _strt in s:
             uon, uoff = '', ''
             if _strt == link_start:
                 uon, uoff = '\033[4m', '\033[24m'
+            elif _strt == stng_start:
+                uon, uoff = '\033[1m', '\033[21m'
+            elif _strt == emph_start:
+                uon, uoff = '\033[7m', '\033[27m'
+            elif _strt == strike_start:
+                uon, uoff = '\033[9m', '\033[29m'
             s = s.replace(
                 _strt, col('', _col, bg=background, no_reset=1) + uon
             )
@@ -756,7 +766,7 @@ def is_text_node(el):
     # do we start with another tagged child which is NOT in inlines:?
     if not html.startswith('<'):
         return 1, html
-    for inline in ('<a', '<em>', '<code>', '<strong>'):
+    for inline in ('<a', '<em>', '<code>', '<strong>', '<del>'):
         if html.startswith(inline):
             return 1, html
     return 0, 0
@@ -967,6 +977,7 @@ class AnsiPrinter(Treeprocessor):
                             ('<code>', code_start, code_end),
                             ('<strong>', stng_start, stng_end),
                             ('<em>', emph_start, emph_end),
+                            ('<del>', strike_start, strike_end),
                         ):
                             t = t.replace('%s' % tg, start)
                             close_tag = '</%s' % tg[1:]
@@ -1370,9 +1381,9 @@ def main(
             AnsiPrintExtension(),
             TableExtension(),
             fenced_code.FencedCodeExtension(),
+            tilde.DeleteSubExtension()
         ],
     )
-
 
     if code_hilite:
         md = do_code_hilite(md, code_hilite)
