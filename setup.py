@@ -30,7 +30,7 @@ setup(
     author="Axiros GmbH",
     author_email="gk@axiros.com",
     description="Terminal Markdown Viewer",
-    install_requires=["tabulate", "pygments", "markdown", "pymdownx"],
+    install_requires=["tabulate", "pygments", "markdown", "pymdown-extensions"],
     extras_require={"yaml": "pyyaml"},
     long_description=md,
     long_description_content_type="text/markdown",
